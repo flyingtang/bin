@@ -108,7 +108,7 @@ netstat -anp |grep &#39;ESTABLISHED&#39; |grep &#39;python&#39; |grep &#39;tcp6&
 
 netstat -anp |grep &#39;ESTABLISHED&#39; |grep &#39;python&#39; |grep &#39;tcp6&#39; |awk &#39;{print $5}&#39; |awk -F &quot;:&quot; &#39;{print $1}&#39; |sort -u |wc -l
 </code></pre>
-<h1 id="git-">Git 常用命令</h1>
+<h2 id="git-">Git 常用命令</h2>
 <pre><code class="lang-shell"># 生成并查看 
 ssh-keygen -t rsa -C &quot;715709084@qq.com&quot; &amp;&amp; cat ~/.ssh/id_rsa.pub
 
