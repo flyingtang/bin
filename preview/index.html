@@ -1,7 +1,7 @@
 <html>
   <head>
 	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>i5ting_ztree_toc:常用命令</title>
+    <title>i5ting_ztree_toc:index</title>
 		<link href="toc/style/github-bf51422f4bb36427d391e4b75a1daa083c2d840e.css" media="all" rel="stylesheet" type="text/css"/>
 		<link href="toc/style/github2-d731afd4f624c99a4b19ad69f3083cd6d02b81d5.css" media="all" rel="stylesheet" type="text/css"/>
 		<link href="toc/css/zTreeStyle/zTreeStyle.css" media="all" rel="stylesheet" type="text/css"/>
@@ -65,7 +65,8 @@
 				</div>
         <div id='readme' style='width:70%;margin-left:20%;'>
           	<article class='markdown-body'>
-            	<h1 id="netstat-">Netstat 常用命令</h1>
+            	<h1 id="5shell-">5shell 命令</h1>
+<h2 id="netstat-">Netstat 常用命令</h2>
 <pre><code class="lang-shell">
 # 显示所有进出链接
 netstat -anp |grep &#39;ESTABLISHED&#39; |grep &#39;python&#39;
@@ -115,6 +116,48 @@ ssh-keygen -t rsa -C &quot;715709084@qq.com&quot; &amp;&amp; cat ~/.ssh/id_rsa.p
 git config --global user.name &quot;zhangsna&quot;
 git config --global user.email &quot;715709084@qq.com&quot;
 </code></pre>
+<h1 id="golang">Golang</h1>
+<h2 id="-">交叉编译</h2>
+<pre><code class="lang-shell">#GOOS：目标操作系统 
+#GOARCH：目标操作系统的架构
+GOOS=linux GOARCH=amd64 go build hello.go
+</code></pre>
+<table>
+<thead>
+<tr>
+<th>OS</th>
+<th>ARCH</th>
+<th>OS version</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>linux</td>
+<td>386 / amd64 / arm</td>
+<td>&gt;= Linux 2.6</td>
+</tr>
+<tr>
+<td>darwin</td>
+<td>386 / amd64</td>
+<td>OS X (Snow Leopard + Lion)</td>
+</tr>
+<tr>
+<td>freebsd</td>
+<td>386 / amd64</td>
+<td>&gt;= FreeBSD 7</td>
+</tr>
+<tr>
+<td>windows</td>
+<td>386 / amd64</td>
+<td>&gt;= Windows 2000</td>
+</tr>
+</tbody>
+</table>
+<p>拓展阅读</p>
+<pre><code class="lang-shell">CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build hello.go
+</code></pre>
+<p>其中CGO_ENABLED=0的意思是使用C语言版本的GO编译器，参数配置为0的时候就关闭C语言版本的编译器了。自从golang1.5以后go就使用go语言编译器进行编译了。在golang1.9当中没有使用CGO_ENABLED参数发现依然可以正常编译。当然使用了也可以正常编译。比如把CGO_ENABLED参数设置成1，即在编译的过程当中使用CGO编译器，我发现依然是可以正常编译的。</p>
+<p>实际上如果在go当中使用了C的库，比如<code>import &quot;C&quot;</code>默认使用go build的时候就会启动CGO编译器，当然我们可以使用CGO_ENABLED=0来控制go build是否使用CGO编译器。</p>
 
           	</article>
         </div>
