@@ -1,16 +1,16 @@
 <html>
   <head>
 	  <meta http-equiv="content-type" content="text/html; charset=utf-8" />
-    <title>i5ting_ztree_toc:index</title>
+    <title>飞流橙子个人笔记</title>
 		<link href="toc/style/github-bf51422f4bb36427d391e4b75a1daa083c2d840e.css" media="all" rel="stylesheet" type="text/css"/>
 		<link href="toc/style/github2-d731afd4f624c99a4b19ad69f3083cd6d02b81d5.css" media="all" rel="stylesheet" type="text/css"/>
 		<link href="toc/css/zTreeStyle/zTreeStyle.css" media="all" rel="stylesheet" type="text/css"/>
 	  <style>
 		pre {
 		    counter-reset: line-numbering;
-		    border: solid 1px #d9d9d9;
+		    border: solid 1px #ad2525;
 		    border-radius: 0;
-		    background: #fff;
+		    background: rgb(141, 125, 125);
 		    padding: 0;
 		    line-height: 23px;
 		    margin-bottom: 30px;
@@ -115,6 +115,15 @@ ssh-keygen -t rsa -C &quot;715709084@qq.com&quot; &amp;&amp; cat ~/.ssh/id_rsa.p
 # 配置用户名和邮箱
 git config --global user.name &quot;zhangsna&quot;
 git config --global user.email &quot;715709084@qq.com&quot;
+
+git  init
+
+git add .
+
+gcmsg &quot;初始化&quot;
+
+可推送至已经存在的仓库
+git push git@IP:namespace/rulee.git master
 </code></pre>
 <h1 id="golang">Golang</h1>
 <h2 id="-">交叉编译</h2>
@@ -158,11 +167,458 @@ GOOS=linux GOARCH=amd64 go build hello.go
 </code></pre>
 <p>其中CGO_ENABLED=0的意思是使用C语言版本的GO编译器，参数配置为0的时候就关闭C语言版本的编译器了。自从golang1.5以后go就使用go语言编译器进行编译了。在golang1.9当中没有使用CGO_ENABLED参数发现依然可以正常编译。当然使用了也可以正常编译。比如把CGO_ENABLED参数设置成1，即在编译的过程当中使用CGO编译器，我发现依然是可以正常编译的。</p>
 <p>实际上如果在go当中使用了C的库，比如<code>import &quot;C&quot;</code>默认使用go build的时候就会启动CGO编译器，当然我们可以使用CGO_ENABLED=0来控制go build是否使用CGO编译器。</p>
+<h1 id="openstack">OpenStack</h1>
+<h2 id="-">一些概念</h2>
+<table>
+<thead>
+<tr>
+<th><img src="C:\Users\XG\AppData\Roaming\Typora\typora-user-images\image-20201130202845481.png" alt="image-20201130202845481"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<table>
+<thead>
+<tr>
+<th><img src="C:\Users\XG\AppData\Roaming\Typora\typora-user-images\image-20201130202254895.png" alt="image-20201130202254895"></th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td></td>
+</tr>
+</tbody>
+</table>
+<h2 id="windows-gcc-">Windows Gcc 安裝</h2>
+<pre><code class="lang-shell">下载地址： http://www.mingw.org/
+</code></pre>
+<h2 id="centos7-">centos7 同步网络时间</h2>
+<pre><code class="lang-shell">yum -y install ntp ntpdate
+ntpdate 0.asia.pool.ntp.org
+hwclock --systohc
+</code></pre>
+<h1 id="winrm">winrm</h1>
+<h2 id="-">简介</h2>
+<pre><code>根据 WinRM SDK (msdn2.microsoft.com/aa384426)，Windows 远程管理是“WS 管理协议的 Microsoft 实施，该协议是基于标准 SOAP、不受防火墙影响的协议，允许不同供应商的硬件和操作系统相互操作。”Java Specification Request 262（Web Services Connector for JMX Agent）承诺要与基于 Windows 的、WS-Management 服务直接交互。
+
+WinRM 可用于 Windows Server 2003 R2、Windows Vista 和 Windows Server 2008，而且 WinRM 使您可以通过 Internet 管理计算机。WinRM 使用端口 80 完成此操作，端口 80 是一种标准的 Internet 服务端口，大多数防火墙都打开此端口（不过，可根据需要更改 WinRM 和默认传输机制 HTTP 使用的端口）。
+
+使用该技术可更轻松地通过 Internet 甚至防火墙管理计算机。当然，Windows 管理规范 (WMI) 始终能够远程管理计算机；但是 WMI 依赖分布式 COM (DCOM) 作为其远程管理技术。这并没有什么问题，只是在默认情况下，许多防火墙都会阻止 DCOM 通信。的确，您可以打开相应的端口并允许 DCOM 通信，但许多网络管理员并不愿意这样做，他们很担心为 DCOM 放行的同时还会带来各种类型的恶意损害。 
+
+因此，WinRM 是“WS-Management 协议的 Microsoft 实现，该协议是标准的基于 SOAP 的协议，它不受防火墙的影响，允许不同供应商的硬件和操作系统相互操作。”这只是对目前能够使用标准 Internet 协议（如 HTTP 和 HTTPS）执行远程管理的另一种说法。 
+
+Powershell 使用WinRM 作为远程传输协议。最新版本的 Powershell 2.0 CTP3 可以下载: http://go.microsoft.com/fwlink/?LinkID=131969 。不过要在PowerShell 2.0 CTP3上使用WinRM,只能使用Vista，Windows 2008 Server。
+</code></pre><h2 id="-">配置</h2>
+<pre><code># 开启winrm服务
+winrm quickconfig  或 winrm qc
+
+winrm set winrm/config/service/Auth &#39;@{Basic=&quot;true&quot;}&#39;
+winrm set winrm/config/service &#39;@{AllowUnencrypted=&quot;true&quot;}&#39;
+
+# 查看winrm配置
+winrm g winrm/config
+
+# 查看winrm服务状态
+winrm e winrm/config/listener
+</code></pre><h2 id="-">问题</h2>
+<pre><code># powershell 禁止执行脚本
+set-executionpolicy remotesigned
+get-executionpolicy
+
+# 开启HTTPS，必须要ssl自签名证书 (略过)
+</code></pre><h2 id="-">使用</h2>
+<p><code>开源go库 ：github.com/masterzen/winrm</code></p>
+<h1 id="vbscript">VBScript</h1>
+<h2 id="1-">1.变量</h2>
+<blockquote>
+<p>变量一般先使用Dim声明后使用,基本变量直接使用赋值符号(=)即可赋值，但是对象必须用set 进行赋值</p>
+</blockquote>
+<ul>
+<li><p>整形</p>
+<pre><code class="lang-vbscript">dim intcount
+intcount = 10
+</code></pre>
+</li>
+<li><p>字符串</p>
+<pre><code class="lang-vbscript">dim strname
+strname=&quot;xiaogang&quot;
+</code></pre>
+</li>
+<li><p>数组</p>
+<pre><code class="lang-vbscript">&#39; 一维数组
+myArr = Array()
+ReDim Preserve MyArr(1)
+MyArr(0)  = &quot;xiaopgang&quot;
+MyArr(1)  = &quot;xiaopgang&quot;
+
+ReDim Preserve  MyArr(3)
+MyArr(2)  = &quot;xiaopgang&quot;
+WScript.Echo MyArr(0)
+
+&#39; 二维数组
+Dim  Info() &#39;定义动态数组
+ReDim Info( 8, 9 ) &#39;初始化
+InfoSize = UBound( Info, 2 ) &#39;得到第二维最大下标
+WScript.Echo InfoSize
+ReDim Preserve Info( 8, InfoSize+1 ) &#39;重新定义第二维
+</code></pre>
+</li>
+<li><p>对象</p>
+<p><code>`</code>vbscript
+Dim objWMIService,colItems
+&#39; 隐式声明
+strComputer = &quot;.&quot;
+Set objWMIService = GetObject(&quot;winmgmts:\&quot; &amp; strComputer &amp; &quot;\root\cimv2&quot;)
+Set colItems = objWMIService.ExecQuery(&quot;Select * from Win32_Process&quot;,,48)</p>
+</li>
+</ul>
+<pre><code>
+
+
+## 2.流程
+
+- for to
+
+  ```vbscript
+  for i = 0 to list step 1
+
+  next
+</code></pre><ul>
+<li><p>for each</p>
+<pre><code class="lang-vbscript">for each element in list
+
+next
+</code></pre>
+</li>
+</ul>
+<ul>
+<li><p>if 判断</p>
+<pre><code class="lang-vbscript">if 条件 Then
+
+else if 条件 Then
+
+else
+
+end if
+</code></pre>
+</li>
+</ul>
+<h2 id="3-">3.过程</h2>
+<ul>
+<li><p>格式</p>
+<pre><code class="lang-vbscript">sub 过程名(参数列表...)
+    &#39; todo
+end sub
+</code></pre>
+</li>
+<li><p>使用</p>
+<pre><code class="lang-vbscript">&#39; 方式一
+call 过程名 参数列表...
+&#39; 方式二
+过程名()
+</code></pre>
+</li>
+</ul>
+<h2 id="4-">4.函数</h2>
+<ul>
+<li><p>格式</p>
+<pre><code class="lang-vbscript">function 函数名(参数列表...)
+
+    函数名=返回值
+end function
+</code></pre>
+</li>
+</ul>
+<ul>
+<li><p>使用</p>
+<pre><code class="lang-vbscript">&#39;方式一
+结果 = 函数名(参数列表...)
+
+&#39;方式二
+call 函数名 参数列表...
+</code></pre>
+</li>
+</ul>
+<h2 id="5-">5.字典</h2>
+<blockquote>
+<p>语法不自带字典，可以使用如下方式</p>
+</blockquote>
+<ul>
+<li><p>例子</p>
+<pre><code class="lang-vbscript">Dim Dic
+Set Dic = CreateObject(&quot;Scripting.Dictionary&quot;)
+&#39; 理论上任何的值都能存，目前存过简单数据类型，存储过类对象
+Dic.Add &quot;Name&quot;, &quot;Sirrah&quot; &#39;向Dictionary对象中添加键值对
+Dic.Add &quot;Age&quot;, 23
+&#39;使用
+WScript.Echo Dic.Item(&quot;Age&quot;) &#39; 输出 golang, 可以用exists先测试是否存在
+</code></pre>
+</li>
+</ul>
+<h2 id="6-">6. 类</h2>
+<ul>
+<li><p>格式</p>
+<pre><code class="lang-vbscript">Class ClassProcess
+    Public strProcessName &#39;公有
+    Private intProcessID &#39;私有
+    Public intProcessMemUsed
+    Public intCpuUsed
+    Public Sub Class_Initialize
+        &#39; Called automatically when class is created
+    End Sub
+
+    Private Sub Class_Terminate
+        &#39; Called automatically when all references to class instance are removed
+    End Sub
+
+    function ToString()
+        &#39; todo
+    end function
+
+End Class
+</code></pre>
+</li>
+</ul>
+<ul>
+<li><p>使用</p>
+<pre><code class="lang-vbscript">set p = New ClassProcess
+&#39; p.intProcessID 错误，私有无法调用
+p.strProcessName = &quot;golang&quot;
+p.intProcessMemUsed = 50
+p.intCpuUsed = 50
+&#39; 使用
+WScript.Echo p.strProcessName &#39; 输出 golang
+</code></pre>
+</li>
+</ul>
+<h2 id="7-">7.案例</h2>
+<pre><code class="lang-vbscript">Class ObjProcessInfo
+    Public arrProcessObj 
+    Private intProcessCount
+    Public mapIdProcessObj
+    Private Sub Class_Initialize
+        arrProcessObj = Array()
+        intProcessCount = 0
+        Set mapIdProcessObj = CreateObject(&quot;Scripting.Dictionary&quot;)
+        WScript.Echo &quot; Called automatically when class is created&quot;
+    End Sub
+
+    Private Sub Class_Terminate
+        &#39; Called automatically when all references to class instance are removed
+        WScript.Echo &quot; Called automatically when all references to class instance are removed&quot;
+
+    End Sub
+
+
+
+    sub CollectProcess()
+        strComputer = &quot;.&quot;
+        Set objWMIService = GetObject(&quot;winmgmts:\\&quot; &amp; strComputer &amp; &quot;\root\cimv2&quot;)
+
+        &#39; 动态信息
+        Set perfColItems = objWMIService.ExecQuery(&quot;Select * from Win32_PerfFormattedData_PerfProc_Process&quot;,,48)
+        Set mapIdProcessPerfObj = CreateObject(&quot;Scripting.Dictionary&quot;)
+        Dim objPerfItem &#39;as Win32_PerfFormattedData_PerfProc_Process
+        For Each objPerfItem in perfColItems
+            set tmp = New ObjPerfProcess
+            tmp.ProcessProcessId = objPerfItem.IDProcess
+            tmp.ProcessPercentProcessorTime = objPerfItem.PercentProcessorTime
+            tmp.ProcessWorkingSet = objPerfItem.WorkingSet
+            &#39; 有两个ID 为0 的东东
+            if  objPerfItem.IDProcess &lt;&gt; 0 Then 
+                mapIdProcessPerfObj.Add objPerfItem.IDProcess, tmp
+            end if 
+        Next
+
+
+        &#39; 命令行读取的数据
+        strResult = createobject(&quot;wscript.shell&quot;).exec(&quot;TASKLIST /V /FO LIST&quot;).StdOut.ReadAll
+        arrSplitStr =  Split(strResult, vbCrLf)
+        Dim  arrSplit() 
+        ReDim arrSplit(9, 1) 
+        currentRows = 0
+        for i = 0 to UBound(arrSplitStr) step 1
+            &#39; 第一行是空行,所以去除
+            if i &lt;&gt; 0 Then
+                size  = UBound( arrSplit, 2) 
+                if arrSplitStr(i) = &quot;&quot; Then
+                    ReDim Preserve arrSplit(9, size+1) 
+                    currentRows = 0
+                else
+                    arrSplit(currentRows, size-1) = (Split(arrSplitStr(i), &quot;:&quot;, 2))(1)
+                    currentRows = currentRows + 1
+                end if
+            end if
+        next
+
+        Set mapProcessIdCmdnTask = CreateObject(&quot;Scripting.Dictionary&quot;)
+        for i = 0 to  UBound( arrSplit, 2)  step 1
+            set tmp = New CmdTask
+            tmp.pid=CInt(arrSplit(1, i))
+            tmp.memused=arrSplit(4, i)
+            tmp.cpuused=arrSplit(7, i)  
+            if Not mapProcessIdCmdnTask.Exists(tmp.pid) Then 
+                  mapProcessIdCmdnTask.Add tmp.pid, tmp
+            end if 
+        next
+
+        &#39; 基本信息
+        Set colItems = objWMIService.ExecQuery(&quot;Select * from Win32_Process&quot;,,48)
+        Dim objItem &#39;as Win32_Process 
+        For Each objItem in colItems
+            count = intProcessCount
+            intProcessCount = intProcessCount+1
+            ReDim Preserve arrProcessObj(intProcessCount)
+            set arrProcessObj(count) = New ObjProcess
+            arrProcessObj(count).ProcessProcessId = objItem.ProcessId
+            arrProcessObj(count).ProcessName = objItem.Name
+            arrProcessObj(count).ProcessParentProcessId = objItem.ParentProcessId
+            arrProcessObj(count).ProcessThreadCount = objItem.ThreadCount
+            arrProcessObj(count).ProcessHandleCount = objItem.HandleCount
+            arrProcessObj(count).ProcessKernelModeTime = objItem.KernelModeTime
+            arrProcessObj(count).ProcessUserModeTime = objItem.UserModeTime
+            arrProcessObj(count).ProcessCpuTime =  (objItem.KernelModeTime + objItem.UserModeTime) / 10000000
+            arrProcessObj(count).ProcessWorkingSetSize =objItem.WorkingSetSize
+                    &#39; if TotalVisibleMemorySize &gt; 0 Then
+            &#39;     WScript.Echo &quot;ProcessProMemPercent=&quot; &amp; (objItem.WorkingSetSize\1024) \ TotalVisibleMemorySize
+            &#39; else
+            &#39;     WScript.Echo &quot;ProcessProMemPercent=&quot;
+
+            &#39; WScript.Echo &quot;arrProcessObj(count).ProcessProcessId===&quot; &amp; arrProcessObj(count).ProcessProcessId
+            &#39; WScript.Echo mapIdProcessObj.Item(arrProcessObj(count).ProcessProcessId).ProcessName
+
+            if objItem.ProcessId &lt;&gt; 0 Then
+                set tmp =  mapIdProcessPerfObj.Item(objItem.ProcessId)   
+                arrProcessObj(count).ProcessPercentProcessorTime = tmp.ProcessPercentProcessorTime
+                arrProcessObj(count).ProcessWorkingSet = tmp.ProcessWorkingSet
+                &#39;TODO 问题
+               if  mapProcessIdCmdnTask.Exists(cint(objItem.ProcessId)) Then 
+                set ttmp = mapProcessIdCmdnTask.Item(objItem.ProcessId)
+                arrProcessObj(count).ProcessMemused = ttmp.memused
+                arrProcessObj(count).ProcessCpuused = ttmp.cpuused
+               end if 
+            end if 
+            mapIdProcessObj.Add arrProcessObj(count).ProcessProcessId, arrProcessObj(count)
+        Next
+    end sub
+
+    sub PrintProcess()
+        for each processObj in arrProcessObj
+            if IsEmpty(processObj) Then
+            else
+                processObj.ToString
+                &#39; if processObj.ProcessProcessId &lt;&gt; 0 Then
+                &#39;     WScript.Echo &quot;processObj.ProcessProcessId=== &quot; &amp; processObj.ProcessProcessId 
+                &#39;     WScript.Echo &quot;ProcesxxxxxxxxxxxxxxxxxsWorkingSet&quot; &amp; mapIdProcessObj.Item(processObj.ProcessProcessId).ProcessWorkingSet
+                &#39; end if 
+            end if
+        next    
+    end sub
+End Class
+
+class ObjProcess
+    Public ProcessProcessId
+    Public ProcessName
+    Public ProcessParentProcessId
+    Public ProcessThreadCount
+    Public ProcessHandleCount
+    Public ProcessCpuTime
+    Public ProcessKernelModeTime
+    Public ProcessUserModeTime
+    Public ProcessWorkingSetSize
+    Public ProcessPercentProcessorTime
+    Public ProcessWorkingSet
+    Public ProcessMemused
+    Public ProcessCpuused
+    private sub class_Initialize
+        &#39; Called automatically when class is created
+    end sub
+
+    private sub class_Terminate
+        &#39; Called automatically when all references to class instance are removed
+    end sub
+
+    Public sub ToString()
+        WScript.Echo &quot;ProcessProcessId=&quot; &amp; ProcessProcessId
+        WScript.Echo &quot;ProcessName=&quot; &amp; ProcessName
+        WScript.Echo &quot;ProcessParentProcessId=&quot; &amp; ProcessParentProcessId
+        WScript.Echo &quot;ProcessThreadCount=&quot; &amp; ProcessThreadCount
+        WScript.Echo &quot;ProcessHandleCount=&quot; &amp; ProcessHandleCount
+        WScript.Echo &quot;ProcessCpuTime=&quot; &amp; ProcessCpuTime
+        WScript.Echo &quot;ProcessKernelModeTime=&quot; &amp; ProcessKernelModeTime
+        WScript.Echo &quot;ProcessUserModeTime=&quot; &amp; ProcessUserModeTime
+        WScript.Echo &quot;ProcessWorkingSetSize=&quot;  &amp; ProcessWorkingSetSize
+        WScript.Echo &quot;ProcessPercentProcessorTime=&quot;  &amp; ProcessPercentProcessorTime
+        WScript.Echo &quot;ProcessWorkingSet=&quot;  &amp; ProcessWorkingSet
+        WScript.Echo &quot;ProcessMemused=&quot;  &amp; ProcessMemused
+        WScript.Echo &quot;ProcessCpuused=&quot;  &amp; ProcessCpuused
+    end sub
+end class
+
+class ObjPerfProcess
+    Public ProcessProcessId
+    Public ProcessPercentProcessorTime
+    Public ProcessWorkingSet
+    Public ProcessName
+    private sub class_Initialize
+        &#39; Called automatically when class is created
+    end sub
+
+    private sub class_Terminate
+        &#39; Called automatically when all references to class instance are removed
+    end sub
+
+end class
+
+&#39; cmd 任务对象
+class CmdTask
+    Public pid
+    Public memused
+    Public cpuused
+    private sub class_Initialize
+        &#39; Called automatically when class is created
+    end sub
+
+    private sub class_Terminate
+        &#39; Called automatically when all references to class instance are removed
+    end sub
+end class
+
+
+set  objProInfo = New ObjProcessInfo
+objProInfo.CollectProcess
+objProInfo.PrintProcess
+</code></pre>
+<h1 id="markdown">MarkDown</h1>
+<h2 id="-">工具推荐</h2>
+<ul>
+<li>Typora</li>
+</ul>
+<h2 id="-html">生成带目录html</h2>
+<pre><code class="lang-shell"># 推荐工具 i5ting_toc
+npm install i5ting_toc -g
+# i5ting_toc -h回车查看帮助。
+
+# 默认在同级目录生成preview文件夹，打开preview下的同名.html文件或者直接i5ting_toc -o可预览。
+
+i5ting_toc -f index.md
+</code></pre>
+<pre><code class="lang-json">
+
+
+
+
+</code></pre>
 
           	</article>
         </div>
 		</div>
   </body>
+  <script type="text/javascript" src="https://s9.cnzz.com/z_stat.php?id=1279482356&web_id=1279482356"></script>
 </html>
 <script type="text/javascript" src="toc/js/jquery-1.4.4.min.js"></script>
 <script type="text/javascript" src="toc/js/jquery.ztree.all-3.5.min.js"></script>
